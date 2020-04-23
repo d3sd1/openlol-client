@@ -38,9 +38,13 @@ export class LcuConnectorService {
   }
 
   private getWindowsLockfile(): string {
-    //TODO: WMIC PROCESS WHERE name='LeagueClient.exe' GET ExecutablePath
     try {
-      return null // TODO
+      const stdout = this.electronService.childProcess.execSync(`WMIC PROCESS WHERE name='LeagueClient.exe' GET ExecutablePath`).toString();
+      if(stdout.indexOf('LeagueClient.exe') === -1) { // Means not open.
+        return null;
+      }
+      let fullPath = normalize(stdout).split(/\n|\n\r/)[1].replace('LeagueClient.exe','');
+      return fullPath + '\\lockfile';
     } catch (e) {
       return null;
     }
