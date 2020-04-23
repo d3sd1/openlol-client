@@ -176,9 +176,8 @@ body {
   width: 17px;
   height: 60px;
   border-radius: 3px;
-  background-color: transparent;
   opacity: 0.8;
-  background: -webkit-gradient(linear, left top, left bottom, from(#D93A54), color-stop(50%, #D93A54), color-stop(50%, #e57a8c), to(#e57a8c));
+  background: -webkit-gradient(linear, left top, left bottom, from(#D93A54), color-stop(50%, #D93A54), color-stop(50%, #e57a8c), to(#e57a8c)), transparent;
   background-size: 100% 20px;
   -webkit-animation: helix-movement 110ms linear infinite;
   animation: helix-movement 110ms linear infinite;
@@ -189,9 +188,8 @@ body {
   position: absolute;
   margin-top: 26px;
   left: 70px;
-  background-color: #D93A54;
   border-radius: 10px 10px 0 0;
-  background: -webkit-gradient(linear, left top, left bottom, from(#D93A54), to(#d72d49));
+  background: -webkit-gradient(linear, left top, left bottom, from(#D93A54), to(#d72d49)), #D93A54;
 }
 .sea .submarine-wrapper .hat .periscope {
   position: absolute;
@@ -216,9 +214,8 @@ body {
   position: relative;
   top: 7px;
   left: 7px;
-  background-color: #D93A54;
   border-radius: 10px;
-  background: -webkit-gradient(linear, left top, left bottom, from(#b3233a), to(#a21f35));
+  background: -webkit-gradient(linear, left top, left bottom, from(#b3233a), to(#a21f35)), #D93A54;
 }
 .sea .submarine-wrapper .hat .leds-wrapper .leds {
   position: absolute;
