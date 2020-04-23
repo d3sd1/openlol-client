@@ -1,5 +1,5 @@
 import {Injectable, OnDestroy, OnInit} from '@angular/core';
-import {LolClient} from "./LolClient";
+import {LcuCredentials} from "./lcu-credentials";
 import {Observable} from "rxjs";
 import {ElectronService} from "../../../core/services";
 import {AppConfig} from "../../../../environments/environment";
@@ -11,18 +11,16 @@ import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
   providedIn: 'root'
 })
 export class LcuConnectorService {
-  lolClient = new LolClient();
-  clientObservable: Observable<LolClient>;
+  private lcuCredentials: LcuCredentials;
+  private clientObservable: Observable<boolean>;
+  private clientStatusOpen: boolean;
 
   constructor(private electronService: ElectronService, private http: HttpClient) {
-    this.lockfileListener();
+    this.clientStatusOpen = false;
+    this.clientObservable = this.initClientManager();
   }
 
-  private async lockfileListener() {
-    const lolPath = await this.updateClientCredentials();
-  }
-
-  getPlatform(): Platform {
+  private getPlatform(): Platform {
     switch (process.platform) {
       case 'darwin':
         return Platform.MACOS;
@@ -35,78 +33,103 @@ export class LcuConnectorService {
     }
   }
 
-  updateClientCredentials(): Promise<boolean> {
+  getLcuCredentials(): LcuCredentials {
+    return this.lcuCredentials;
+  }
+
+  private getWindowsLockfile(): string {
+    //TODO: WMIC PROCESS WHERE name='LeagueClient.exe' GET ExecutablePath
+    try {
+      return null // TODO
+    } catch (e) {
+      return null;
+    }
+  }
+
+  private getMacOsLockfile(): string {
+    try {
+      const stdout = this.electronService.childProcess.execSync(`ps x -o comm= | grep 'LeagueClient'`).toString();
+      let fullPath = normalize(stdout).split(/\n|\n\r/)[0];
+      return fullPath.substr(0, fullPath.indexOf('Contents/LoL')) + 'Contents/LoL/lockfile';
+    } catch (e) {
+      return null;
+    }
+  }
+
+  private getLockfile() {
     let lockfilePath = "";
-    return new Promise((resolve, reject) => {
-      if (this.getPlatform() === Platform.WINDOWS) {
-        this.electronService.childProcess.exec(`WMIC PROCESS WHERE name='LeagueClient.exe' GET ExecutablePath`, (error, stdout, stderr) => {
-          if (error || !stdout || stderr) {
-            reject(error || stderr);
-            return;
-          }
+    const platform = this.getPlatform();
+    if (platform === Platform.WINDOWS) {
+      lockfilePath = this.getWindowsLockfile();
+    } else if (platform === Platform.MACOS) {
+      lockfilePath = this.getMacOsLockfile();
+    } else {
+      console.error("OpenLol is not ready for your platform mate...");
+    }
+    return lockfilePath;
+  }
 
-          const normalizedPath = normalize(stdout).split(/\n|\n\r/)[1];
-          resolve();
-        });
-      } else if (this.getPlatform() === Platform.MACOS) {
-        const stdout = this.electronService.childProcess.execSync(`ps x -o comm= | grep 'LeagueClient'`).toString();
+  private translateLockfileToCredentials(lockfile) {
+    const parts = lockfile.split(':');
+    const newLcuCredentials = new LcuCredentials();
+    newLcuCredentials.port = parts[2];
+    newLcuCredentials.username = 'riot';
+    newLcuCredentials.password = parts[3];
+    this.lcuCredentials = newLcuCredentials;
+  }
 
-        let fullPath = normalize(stdout).split(/\n|\n\r/)[0];
-        lockfilePath = fullPath.substr(0, fullPath.indexOf('Contents/LoL')) + 'Contents/LoL/lockfile';
-        console.log("LOCKFILE " + lockfilePath);
-      } else {
-        console.error("OpenLol is not ready for your platform mate...");
+  private runClientSetup() {
+    if (!this.isClientOpen()) {
+      return;
+    }
+    let lockFile;
+    if (this.clientStatusOpen) {
+      try {
+        lockFile = this.electronService.fs.readFileSync(this.getLockfile(), "utf8");
+        this.translateLockfileToCredentials(lockFile);
+      } catch (e) {
+
       }
-      console.log("LOCKFILE " + lockfilePath);
-      const lockFile = this.electronService.fs.readFileSync(lockfilePath, "utf8");
-      const parts = lockFile.split(':');
-      console.log();
-
-      this.testMEssageSend('riot', parts[3], parts[2]);
-    });
-  }
-
-  testMEssageSend(user, pass, port) {
-    let headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Accept', 'application/json')
-      .set('username', 'riot')
-      .set('password', pass);
-
-    let httpOptions = {
-      headers: headers
-    };
-
-    let body = {
-      body: "SI TE LLEGA ESTE MENSAJE GRITA SALTAAAAAAAAAAAAAAAAAAAAAA",
-      fromId: "45e8d835-fac2-57a1-9925-76629b11612b@eu1.pvp.net",
-      fromPid: "45e8d835-fac2-57a1-9925-76629b11612b@eu1.pvp.net",
-      fromSummonerId: 44089097,
-      id: "1587652051150:4",
-      isHistorical: true,
-      timestamp: "2020-04-23T14:27:31.150Z",
-      type: "chat"
-    };
-    this.http.post('https://riot:' + pass + '@127.0.0.1:' + port + '/lol-chat/v1/conversations/465a1cd3-7ac1-5bc0-afdc-dffc94d86e2a@eu1.pvp.net/messages', body, httpOptions).subscribe((data) => {
-
-      console.log("DATAAAAA: ", data);
-
-    }, (err) => {
-      console.log("ERRORACO ", err);
-    });
-
+    }
 
   }
 
-  on(): Observable<LolClient> {
+  private clientStatusObserver(subscriber) {
+    const lockFilePath = this.getLockfile();
+    this.clientStatusOpen = lockFilePath !== null;
+    subscriber.next(this.isClientOpen());
+  }
+
+  private runClientManager(observer) {
+    if (!this.isClientOpen()) {
+      this.lcuCredentials = null;
+    }
+    if (this.isClientOpen() && this.getLcuCredentials() == null) {
+      this.runClientSetup();
+    }
+    this.clientStatusObserver(observer);
+  }
+
+  private initClientManager() {
+    return new Observable<boolean>((observer) => {
+      this.runClientManager(observer);
+      setInterval(() => {
+        this.runClientManager(observer);
+      }, AppConfig.lockfileRefresh.file);
+    });
+  }
+
+  clientStatus(): Observable<boolean> {
+    return this.clientObservable;
+  }/*
+  playingStatus(): Observable<LcuCredentials> {
     return this.clientObservable;
   }
+  lobbyStatus(): Observable<LcuCredentials> {
+    return this.clientObservable;
+  }*/
 
-  isClientOpen(): Promise<boolean> {
-    return new Promise<boolean>((accept) => {
-      this.clientObservable.subscribe((lolClient: LolClient) => {
-        accept(lolClient.isOpen);
-      });
-    });
+  isClientOpen(): boolean {
+    return this.clientStatusOpen;
   }
 }

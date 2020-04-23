@@ -11,14 +11,14 @@ import {
 } from '@angular/router';
 import {Observable} from 'rxjs';
 import {LcuConnectorService} from "./lcu-connector.service";
-import {LolClient} from "./LolClient";
+import {LcuCredentials} from "./lcu-credentials";
 import {AppConfig} from "../../../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ClientClosedGuard implements CanActivate {
-  constructor(private lcuConnectorService: LcuConnectorService, private router: Router) {
+  constructor(private lcuConnector: LcuConnectorService, private router: Router) {
 
   }
 
@@ -26,17 +26,20 @@ export class ClientClosedGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     return new Observable<boolean | UrlTree>((observer) => {
-      observer.next(true);
-      const interval = setInterval(() => {
-        this.lcuConnectorService.isClientOpen().then((isOpen) => {
-          if(isOpen) {
-            this.router.navigate(['onlol/home']);
-            clearInterval(interval);
-            observer.next(false);
+      const initOpen = this.lcuConnector.isClientOpen();
+      if (initOpen) {
+        this.router.navigate(['/openlol/home']).then(() => {
+          observer.unsubscribe();
+        });
+      }
+      this.lcuConnector.clientStatus().subscribe((isOpen) => {
+        if (isOpen) {
+          this.router.navigate(['/openlol/home']).then(() => {
             observer.unsubscribe();
-          }
-        })
-      }, AppConfig.lockfileRefresh.guards);
+          });
+        }
+        observer.next(true);
+      });
     });
   }
 

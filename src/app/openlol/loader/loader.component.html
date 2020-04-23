@@ -1,0 +1,31 @@
+<div class="container">
+  <div class="sea">
+    <div class="circle-wrapper">
+      <div class="bubble"></div>
+      <div class="submarine-wrapper">
+        <div class="submarine-body">
+          <div class="window"></div>
+          <div class="engine"></div>
+          <div class="light"></div>
+        </div>
+        <div class="helix"></div>
+        <div class="hat">
+          <div class="leds-wrapper">
+            <div class="periscope"></div>
+            <div class="leds"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h1 class="text-center">
+    {{loadingMessage}}
+  </h1>
+
+  <div class="progress md-progress" style="height: 20px">
+    <div class="progress-bar" role="progressbar" style="height: 20px" [style.width]="loaderPercentage + '%'"
+         aria-valuenow="{{loaderPercentage}}" aria-valuemin="0" aria-valuemax="100">{{loaderPercentage}}%
+    </div>
+  </div>
+</div>

@@ -1,17 +1,17 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { PageNotFoundComponent } from './shared/components';
-import {OfflineComponent} from "./onlol/offline/offline.component";
-import {OnLoLRoutes} from "./onlol/onlol.routes";
+import {OfflineComponent} from "./openlol/offline/offline.component";
+import {OnLoLRoutes} from "./openlol/onlol.routes";
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'onlol/home',
+    redirectTo: 'openlol/loader',
     pathMatch: 'full'
   },
   {
-    path: 'onlol',
+    path: 'openlol',
     children: OnLoLRoutes
   },
   {
@@ -21,7 +21,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { useHash: true, enableTracing: true })],
+  imports: [RouterModule.forRoot(routes, { useHash: true, enableTracing: false })],
   exports: [RouterModule]
 })
 export class AppRoutingModule {}

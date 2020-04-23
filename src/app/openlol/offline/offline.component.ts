@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {LcuConnectorService} from "../../riot/lol/client/lcu-connector.service";
-import {LolClient} from "../../riot/lol/client/LolClient";
+import {LcuCredentials} from "../../riot/lol/client/lcu-credentials";
 import {Router} from "@angular/router";
 
 @Component({

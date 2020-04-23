@@ -17,7 +17,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { BootstrapComponent } from './bootstrap.component';
 import {RiotModule} from "./riot/riot.module";
 import {MDBBootstrapModule} from "ng-uikit-pro-standard";
-import {OnlolModule} from "./onlol/onlol.module";
+import {OnlolModule} from "./openlol/onlol.module";
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
