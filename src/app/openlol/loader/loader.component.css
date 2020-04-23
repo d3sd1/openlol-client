@@ -47,12 +47,8 @@ body {
   border-radius: 50%;
   background-color: #6bafca;
   opacity: 0.9;
-}
-.sea .bubble:after {
-  top: -20;
+  top: -20px;
   left: 100px;
-  width: 9px;
-  height: 9px;
 }
 .sea .circle-wrapper {
   position: relative;
