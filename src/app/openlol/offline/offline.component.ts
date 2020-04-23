@@ -5,8 +5,7 @@ import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-home',
-  templateUrl: './offline.component.html',
-  styleUrls: ['./offline.component.scss']
+  templateUrl: './offline.component.html'
 })
 export class OfflineComponent implements OnInit {
 
