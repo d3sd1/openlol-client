@@ -81,10 +81,8 @@ body {
   position: absolute;
   margin-top: 50px;
   left: 25px;
-  background-color: #D93A54;
   border-radius: 40px;
-  background: -webkit-gradient(linear, left top, left bottom, from(#D93A54), to(#bc243d));
-  background: linear-gradient(#D93A54, #bc243d);
+  background: -webkit-gradient(linear, left top, left bottom, from(#D93A54), to(#bc243d)), #D93A54;
 }
 .sea .submarine-wrapper .submarine-body .light {
   position: absolute;
@@ -167,10 +165,8 @@ body {
   position: absolute;
   margin-top: 55px;
   left: 0;
-  background-color: #D93A54;
   border-radius: 7px;
-  background: -webkit-gradient(linear, left top, left bottom, from(#D93A54), to(#bc243d));
-  background: linear-gradient(#D93A54, #bc243d);
+  background: -webkit-gradient(linear, left top, left bottom, from(#D93A54), to(#bc243d)), #D93A54;
 }
 .sea .submarine-wrapper .helix:after {
   content: "";
@@ -183,7 +179,6 @@ body {
   background-color: transparent;
   opacity: 0.8;
   background: -webkit-gradient(linear, left top, left bottom, from(#D93A54), color-stop(50%, #D93A54), color-stop(50%, #e57a8c), to(#e57a8c));
-  background: linear-gradient(to bottom, #D93A54, #D93A54 50%, #e57a8c 50%, #e57a8c);
   background-size: 100% 20px;
   -webkit-animation: helix-movement 110ms linear infinite;
   animation: helix-movement 110ms linear infinite;
@@ -197,7 +192,6 @@ body {
   background-color: #D93A54;
   border-radius: 10px 10px 0 0;
   background: -webkit-gradient(linear, left top, left bottom, from(#D93A54), to(#d72d49));
-  background: linear-gradient(#D93A54, #d72d49);
 }
 .sea .submarine-wrapper .hat .periscope {
   position: absolute;
@@ -225,7 +219,6 @@ body {
   background-color: #D93A54;
   border-radius: 10px;
   background: -webkit-gradient(linear, left top, left bottom, from(#b3233a), to(#a21f35));
-  background: linear-gradient(#b3233a, #a21f35);
 }
 .sea .submarine-wrapper .hat .leds-wrapper .leds {
   position: absolute;
@@ -281,14 +274,12 @@ body {
 @-webkit-keyframes helix-movement {
   100% {
     background: -webkit-gradient(linear, left top, left bottom, color-stop(50%, #e57a8c), color-stop(#e57a8c), color-stop(#D93A54), color-stop(50%, #D93A54));
-    background: linear-gradient(to bottom, #e57a8c 50%, #e57a8c, #D93A54, #D93A54 50%);
     background-size: 100% 20px;
   }
 }
 @keyframes helix-movement {
   100% {
     background: -webkit-gradient(linear, left top, left bottom, color-stop(50%, #e57a8c), color-stop(#e57a8c), color-stop(#D93A54), color-stop(50%, #D93A54));
-    background: linear-gradient(to bottom, #e57a8c 50%, #e57a8c, #D93A54, #D93A54 50%);
     background-size: 100% 20px;
   }
 }
