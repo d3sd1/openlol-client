@@ -7,7 +7,7 @@ export const AppConfig = {
   production: false,
   environment: 'DEV',
   lockfileRefresh: {
-    file: 5000,
-    guards: 2000,
+    file: 15000,
+    guards: 15000,
   }
 };

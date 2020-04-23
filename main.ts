@@ -18,6 +18,7 @@ function createWindow(): BrowserWindow {
     width: size.width,
     height: size.height,
     webPreferences: {
+      webSecurity: false,
       nodeIntegration: true,
       allowRunningInsecureContent: (serve) ? true : false,
     },
@@ -54,6 +55,8 @@ function createWindow(): BrowserWindow {
 try {
 
   app.allowRendererProcessReuse = true;
+  app.commandLine.appendSwitch('ignore-certificate-errors', 'true');
+
 
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.

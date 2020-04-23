@@ -3,6 +3,9 @@ import {LolClient} from "./LolClient";
 import {Observable} from "rxjs";
 import {ElectronService} from "../../../core/services";
 import {AppConfig} from "../../../../environments/environment";
+import {Platform} from "./Platform";
+import {normalize} from 'path';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -10,39 +13,89 @@ import {AppConfig} from "../../../../environments/environment";
 export class LcuConnectorService {
   lolClient = new LolClient();
   clientObservable: Observable<LolClient>;
-  refreshInterval;
 
-  constructor(private electronService: ElectronService) {
-    console.log("LCU.... SERVICEEEE");
+  constructor(private electronService: ElectronService, private http: HttpClient) {
     this.lockfileListener();
   }
 
-  private lockfileListener() {
-    console.log("LOCK FILE LISTENER");
-    this.clientObservable = new Observable<LolClient>((observer) => {
-      this.refreshInterval = setInterval(() => {
-        const lockFile = this.getLockfile();
-        console.log("Refresh lockfile...", lockFile);
+  private async lockfileListener() {
+    const lolPath = await this.updateClientCredentials();
+  }
 
-        if (lockFile !== null) {
-          this.lolClient.isOpen = true;
-        } else {
-          this.lolClient.isOpen = false;
-        }
+  getPlatform(): Platform {
+    switch (process.platform) {
+      case 'darwin':
+        return Platform.MACOS;
+        break;
+      case 'win32':
+        return Platform.WINDOWS;
+        break;
+      default:
+        return Platform.UNKNOWN;
+    }
+  }
 
-        observer.next(this.lolClient);
-      }, AppConfig.lockfileRefresh.file);
+  updateClientCredentials(): Promise<boolean> {
+    let lockfilePath = "";
+    return new Promise((resolve, reject) => {
+      if (this.getPlatform() === Platform.WINDOWS) {
+        this.electronService.childProcess.exec(`WMIC PROCESS WHERE name='LeagueClient.exe' GET ExecutablePath`, (error, stdout, stderr) => {
+          if (error || !stdout || stderr) {
+            reject(error || stderr);
+            return;
+          }
+
+          const normalizedPath = normalize(stdout).split(/\n|\n\r/)[1];
+          resolve();
+        });
+      } else if (this.getPlatform() === Platform.MACOS) {
+        const stdout = this.electronService.childProcess.execSync(`ps x -o comm= | grep 'LeagueClient'`).toString();
+
+        let fullPath = normalize(stdout).split(/\n|\n\r/)[0];
+        lockfilePath = fullPath.substr(0, fullPath.indexOf('Contents/LoL')) + 'Contents/LoL/lockfile';
+        console.log("LOCKFILE " + lockfilePath);
+      } else {
+        console.error("OpenLol is not ready for your platform mate...");
+      }
+      console.log("LOCKFILE " + lockfilePath);
+      const lockFile = this.electronService.fs.readFileSync(lockfilePath, "utf8");
+      const parts = lockFile.split(':');
+      console.log();
+
+      this.testMEssageSend('riot', parts[3], parts[2]);
     });
   }
 
-  getLockfile(): string {
-    let lockfile = null;
-    try {
-      lockfile = this.electronService.fs.readFileSync("C:\\Riot Games\\2\\League of Legends\\lockfile", "utf8");
-    } catch (e) {
-      lockfile = null;
-    }
-    return lockfile;
+  testMEssageSend(user, pass, port) {
+    let headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json')
+      .set('username', 'riot')
+      .set('password', pass);
+
+    let httpOptions = {
+      headers: headers
+    };
+
+    let body = {
+      body: "SI TE LLEGA ESTE MENSAJE GRITA SALTAAAAAAAAAAAAAAAAAAAAAA",
+      fromId: "45e8d835-fac2-57a1-9925-76629b11612b@eu1.pvp.net",
+      fromPid: "45e8d835-fac2-57a1-9925-76629b11612b@eu1.pvp.net",
+      fromSummonerId: 44089097,
+      id: "1587652051150:4",
+      isHistorical: true,
+      timestamp: "2020-04-23T14:27:31.150Z",
+      type: "chat"
+    };
+    this.http.post('https://riot:' + pass + '@127.0.0.1:' + port + '/lol-chat/v1/conversations/465a1cd3-7ac1-5bc0-afdc-dffc94d86e2a@eu1.pvp.net/messages', body, httpOptions).subscribe((data) => {
+
+      console.log("DATAAAAA: ", data);
+
+    }, (err) => {
+      console.log("ERRORACO ", err);
+    });
+
+
   }
 
   on(): Observable<LolClient> {
