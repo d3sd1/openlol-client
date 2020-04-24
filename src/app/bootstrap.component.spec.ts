@@ -3,6 +3,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { BootstrapComponent } from './bootstrap.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { ElectronService } from './core/services';
+import {NO_ERRORS_SCHEMA} from '@angular/core';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {

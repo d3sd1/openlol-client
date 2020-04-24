@@ -28,15 +28,15 @@ export class ClientOpenGuard implements CanActivate {
     return new Observable<boolean | UrlTree>((observer) => {
       const initOpen = this.lcuConnector.isClientOpen();
       if (!initOpen) {
-        this.router.navigate(['/openlol/offline']).then(() => {
+        /* TODO this.router.navigateByUrl('openlol/offline').then(() => {
           observer.unsubscribe();
-        });
+        }); */
       }
       this.lcuConnector.clientStatus().subscribe((isOpen) => {
         if (!isOpen) {
-          this.router.navigate(['/openlol/offline']).then(() => {
+          /* TODO this.router.navigateByUrl('openlol/offline').then(() => {
             observer.unsubscribe();
-          });
+          });*/
         }
         observer.next(true);
       });

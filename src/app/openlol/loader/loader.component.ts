@@ -16,9 +16,9 @@ export class LoaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.lcuConnector.clientStatus().subscribe((statusUpdate) => {if (statusUpdate) {
-        this.router.navigateByUrl('/openlol/home');
+        /* TODO this.router.navigateByUrl('/openlol/home'); */
       } else {
-        this.router.navigateByUrl('/openlol/offline');
+        /* TODO this.router.navigateByUrl('openlol/offline'); */
       }
     });
   }
