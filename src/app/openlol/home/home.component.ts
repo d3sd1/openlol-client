@@ -7,7 +7,7 @@ import {LcuApiCallerService} from '../../riot/lol/client/lcu-api-caller.service'
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private lcuApi:LcuApiCallerService) { }
+  constructor(private lcuApi: LcuApiCallerService) { }
 
   ngOnInit(): void {
     this.lcuApi.testMEssageSend();

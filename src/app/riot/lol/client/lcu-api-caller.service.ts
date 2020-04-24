@@ -6,23 +6,23 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 })
 export class LcuApiCallerService {
 
-  constructor(private http:HttpClient) { }
+  constructor(private http: HttpClient) { }
 
   testMEssageSend() {
     const user = 'riot';
     const pass = 'yEJljaPR1vjH8f1FEtHLnA';
     const port = 59032;
-    let headers = new HttpHeaders()
+    const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
       .set('username', 'riot')
       .set('password', pass);
 
-    let httpOptions = {
+    const httpOptions = {
       headers: headers
     };
 
-    let body = {
+    const body = {
       body: "eres mazo de tonto",
       fromId: "45e8d835-fac2-57a1-9925-76629b11612b@eu1.pvp.net",
       fromPid: "45e8d835-fac2-57a1-9925-76629b11612b@eu1.pvp.net",

@@ -40,10 +40,10 @@ export class LcuConnectorService {
   private getWindowsLockfile(): string {
     try {
       const stdout = this.electronService.childProcess.execSync(`WMIC PROCESS WHERE name='LeagueClient.exe' GET ExecutablePath`).toString();
-      if(stdout.indexOf('LeagueClient.exe') === -1) { // Means not open.
+      if(!stdout.includes('LeagueClient.exe')) { // Means not open.
         return null;
       }
-      let fullPath = normalize(stdout).split(/\n|\n\r/)[1].replace('LeagueClient.exe','');
+      const fullPath = normalize(stdout).split(/\n|\n\r/)[1].replace('LeagueClient.exe','');
       return fullPath + '\\lockfile';
     } catch (e) {
       return null;
@@ -53,7 +53,7 @@ export class LcuConnectorService {
   private getMacOsLockfile(): string {
     try {
       const stdout = this.electronService.childProcess.execSync(`ps x -o comm= | grep 'LeagueClient'`).toString();
-      let fullPath = normalize(stdout).split(/\n|\n\r/)[0];
+      const fullPath = normalize(stdout).split(/\n|\n\r/)[0];
       return fullPath.substr(0, fullPath.indexOf('Contents/LoL')) + 'Contents/LoL/lockfile';
     } catch (e) {
       return null;

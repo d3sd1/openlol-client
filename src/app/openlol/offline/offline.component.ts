@@ -9,7 +9,7 @@ import {Router} from "@angular/router";
 })
 export class OfflineComponent implements OnInit {
 
-  constructor(private lcuConnectorService: LcuConnectorService, private router:Router) { }
+  constructor(private lcuConnectorService: LcuConnectorService, private router: Router) { }
 
   ngOnInit(): void {
   }
