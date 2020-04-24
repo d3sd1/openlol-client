@@ -19,3 +19,12 @@ script:
   - npm run test
   - npm run e2e
   - npm run build
+after_success:
+  - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh success $DISCORD_CLOSED_BETA_WEBHOOK_URL
+
+after_failure:
+  - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh failure $DISCORD_CLOSED_BETA_WEBHOOK_URL
