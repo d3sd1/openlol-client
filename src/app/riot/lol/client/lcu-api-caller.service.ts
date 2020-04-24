@@ -8,7 +8,10 @@ export class LcuApiCallerService {
 
   constructor(private http:HttpClient) { }
 
-  testMEssageSend(user, pass, port) {
+  testMEssageSend() {
+    const user = 'riot';
+    const pass = 'yEJljaPR1vjH8f1FEtHLnA';
+    const port = 59032;
     let headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
@@ -20,15 +23,17 @@ export class LcuApiCallerService {
     };
 
     let body = {
-      body: "SI TE LLEGA ESTE MENSAJE GRITA SALTAAAAAAAAAAAAAAAAAAAAAA",
+      body: "eres mazo de tonto",
       fromId: "45e8d835-fac2-57a1-9925-76629b11612b@eu1.pvp.net",
       fromPid: "45e8d835-fac2-57a1-9925-76629b11612b@eu1.pvp.net",
       fromSummonerId: 44089097,
-      id: "1587652051150:4",
+      id: "1587666741337:24",
       isHistorical: true,
-      timestamp: "2020-04-23T14:27:31.150Z",
-      type: "chat"
+      timestamp: "2020-04-23T18:32:21.461Z",
+      type: "chat",
     };
+    //07e2533c-da8f-55a9-a146-d65b10a54edc@eu1.pvp.net
+
     this.http.get('https://riot:' + pass + '@127.0.0.1:' + port + '/lol-champ-select/v1/session', httpOptions).subscribe((data) => {
 
       console.log("DATAAAAA: ", data);
