@@ -39,7 +39,7 @@ after_failure:
   - ./send.sh failure $DISCORD_CLOSED_BETA_WEBHOOK_URL
 
 before_deploy:
-  - git tag $VERSION_TAG --force -a -m "Travis build $TRAVIS_BUILD_NUMBER"
+  - git tag $TRAVIS_BUILD_NUMBER --force -a -m "Travis build $TRAVIS_BUILD_NUMBER"
 
 deploy:
   provider: releases
