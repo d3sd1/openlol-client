@@ -49,5 +49,5 @@ deploy:
   tag: "experimental-release"
   on:
     tags: false
-    branch: experimental
+    all_branches: true
 #trying release r0.4
