@@ -43,4 +43,5 @@ deploy:
   file: "CHANGELOG.md"
   skip_cleanup: true
   on:
-    tags: true
+    tags: false
+#trying release r0.3
