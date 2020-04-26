@@ -44,11 +44,28 @@ before_deploy:
   - git tag "$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER" --force -a -m "Travis build $TRAVIS_BUILD_NUMBER"
 
 deploy:
-  provider: releases
-  api_key: $GITHUB_OPENLOL_BETA_RELEASE_KEY
-  file: "release/openlol-client-1.0.0.dmg,release/openlol-client 1.0.0.exe"
-  skip_cleanup: true
-  on:
-    tags: false
-    all_branches: true
-#trying release r0.4
+  - provider: releases
+    api_key: $GITHUB_OPENLOL_BETA_RELEASE_KEY
+    file: "release"
+    skip_cleanup: true
+    tag: "experimental-$TRAVIS_BUILD_NUMBER"
+    on:
+      tags: false
+      branch: "experimental"
+  - provider: releases
+    api_key: $GITHUB_OPENLOL_BETA_RELEASE_KEY
+    file: "release"
+    skip_cleanup: true
+    tag: "beta-$TRAVIS_BUILD_NUMBER"
+    on:
+      tags: false
+      branch: "beta"
+
+  - provider: releases
+    api_key: $GITHUB_OPENLOL_BETA_RELEASE_KEY
+    file: "release"
+    skip_cleanup: true
+    tag: "stable-$TRAVIS_BUILD_NUMBER"
+    on:
+      tags: false
+      branch: "stable"

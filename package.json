@@ -1,7 +1,23 @@
 {
   "name": "openlol-client",
   "version": "1.0.0",
-  "description": "Angular 9 with Electron (Typescript + SASS + Hot Reload)",
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "osxSign": {
+          "identity": "OpenLoL",
+          "hardened-runtime": true,
+          "entitlements": "entitlements.plist",
+          "entitlements-inherit": "entitlements.plist",
+          "signature-flags": "library"
+        },
+        "osxNotarize": {
+          "appleId": "andreigarciacuadra@gmail.com"
+        }
+      }
+    }
+  },
+  "description": "Show your best on League of Legends.",
   "homepage": "https://onriot.net",
   "author": {
     "name": "Maxime GRIS",
