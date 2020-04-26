@@ -7,7 +7,6 @@ node_js:
   - '12'
   - '10'
 dist: trusty
-sudo: required
 services:
   - xvfb
 addons:
@@ -47,25 +46,18 @@ deploy:
   - provider: releases
     api_key: $GITHUB_OPENLOL_BETA_RELEASE_KEY
     file: "release"
-    skip_cleanup: true
-    tag: "experimental-$TRAVIS_BUILD_NUMBER"
     on:
       tags: false
       branch: "experimental"
   - provider: releases
     api_key: $GITHUB_OPENLOL_BETA_RELEASE_KEY
     file: "release"
-    skip_cleanup: true
-    tag: "beta-$TRAVIS_BUILD_NUMBER"
     on:
       tags: false
       branch: "beta"
-
   - provider: releases
     api_key: $GITHUB_OPENLOL_BETA_RELEASE_KEY
     file: "release"
-    skip_cleanup: true
-    tag: "stable-$TRAVIS_BUILD_NUMBER"
     on:
       tags: false
       branch: "stable"
