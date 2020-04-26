@@ -37,3 +37,10 @@ after_failure:
   - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
   - ./send.sh failure $DISCORD_CLOSED_BETA_WEBHOOK_URL
+deploy:
+  provider: releases
+  api_key: $GITHUB_OPENLOL_BETA_RELEASE_KEY
+  file: "CHANGELOG.md"
+  skip_cleanup: true
+  on:
+    tags: true
