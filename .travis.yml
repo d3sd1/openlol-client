@@ -44,4 +44,5 @@ deploy:
   skip_cleanup: true
   on:
     tags: false
+    branch: experimental
 #trying release r0.3
