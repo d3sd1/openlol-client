@@ -28,6 +28,8 @@ script:
   - npm run test
   #- npm run e2e
   - npm run build
+  - npm run electron:windows
+  - npm run electron:mac
 after_success:
   - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
@@ -39,14 +41,13 @@ after_failure:
   - ./send.sh failure $DISCORD_CLOSED_BETA_WEBHOOK_URL
 
 before_deploy:
-  - git tag $TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER --force -a -m "Travis build $TRAVIS_BUILD_NUMBER"
+  - git tag "$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER" --force -a -m "Travis build $TRAVIS_BUILD_NUMBER"
 
 deploy:
   provider: releases
   api_key: $GITHUB_OPENLOL_BETA_RELEASE_KEY
-  file: "CHANGELOG.md"
+  file: "release/openlol-client-1.0.0.dmg,release/openlol-client 1.0.0.exe"
   skip_cleanup: true
-  tag: "experimental-release"
   on:
     tags: false
     all_branches: true

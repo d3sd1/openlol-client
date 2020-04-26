@@ -180,7 +180,7 @@
       }
     }
   },
-  "defaultProject": "angular-electron",
+  "defaultProject": "openlol-client",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",
