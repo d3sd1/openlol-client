@@ -46,7 +46,7 @@ deploy:
   api_key: $GITHUB_OPENLOL_BETA_RELEASE_KEY
   file: "CHANGELOG.md"
   skip_cleanup: true
- tag: "experimental-release"
+  tag: "experimental-release"
   on:
     tags: false
     branch: experimental
