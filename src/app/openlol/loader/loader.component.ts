@@ -11,7 +11,7 @@ import {Subscription} from "rxjs";
 export class LoaderComponent implements OnInit, OnDestroy {
   loaderPercentage = 0;
   loadingMessage = "Iniciando...";
-  private lcuSubscription: Subscription;
+  private lcuSubscription: Subscription = null;
 
   constructor(private lcuConnector: LcuConnectorService, private router: Router) {
   }
@@ -19,17 +19,19 @@ export class LoaderComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.lcuSubscription = this.lcuConnector.clientStatus().subscribe((statusUpdate) => {
       if (statusUpdate) {
-        this.router.navigateByUrl('/openlol/home');
-        if (this.lcuSubscription !== null) {
-          this.lcuSubscription.unsubscribe();
-          this.lcuSubscription = null;
-        }
+        this.router.navigateByUrl('/openlol/home').then(() => {
+          if (this.lcuSubscription !== null) {
+            this.lcuSubscription.unsubscribe();
+            this.lcuSubscription = null;
+          }
+        });
       } else {
-        this.router.navigateByUrl('openlol/offline');
-        if (this.lcuSubscription !== null) {
-          this.lcuSubscription.unsubscribe();
-          this.lcuSubscription = null;
-        }
+        this.router.navigateByUrl('openlol/offline').then(r => {
+          if (this.lcuSubscription !== null) {
+            this.lcuSubscription.unsubscribe();
+            this.lcuSubscription = null;
+          }
+        });
       }
     });
   }
