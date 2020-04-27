@@ -4,12 +4,25 @@ import {HomeComponent} from "./home/home.component";
 import {ClientOpenGuard} from "../riot/lol/client/client-open-guard/client-open.guard";
 import {ClientClosedGuard} from "../riot/lol/client/client-closed-guard/client-closed.guard";
 import {LoaderComponent} from './loader/loader.component';
+import {ConfigComponent} from "./home/config/config.component";
+import {AutomatizationsComponent} from "./home/automatizations/automatizations.component";
 
 export const OnLoLRoutes: Routes = [
   {
     path: 'home',
     component: HomeComponent,
-    canActivate: [ClientOpenGuard]
+    canActivate: [ClientOpenGuard],
+    canActivateChild: [ClientOpenGuard],
+    children: [
+      {
+        path: 'automatizations',
+        component: AutomatizationsComponent
+      },
+      {
+        path: 'config',
+        component: ConfigComponent
+      }
+    ]
   },
   {
     path: 'offline',

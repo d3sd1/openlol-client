@@ -14,22 +14,29 @@ export class ClientClosedGuard implements CanActivate {
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    return new Observable<boolean | UrlTree>((observer) => {
+    console.log("new canActivate!");
+    const guardSubscription = new Observable<boolean | UrlTree>((observer) => {
       const initOpen = this.lcuConnector.isClientOpen();
       if (initOpen) {
         this.router.navigate(['/openlol/home']).then(() => {
+          console.log("gogogogogogogooooo");
           observer.unsubscribe();
+          observer.complete();
         });
       }
-      this.lcuConnector.clientStatus().subscribe((isOpen) => {
+      const lcuSubscription = this.lcuConnector.clientStatus().subscribe((isOpen) => {
         if (isOpen) {
           this.router.navigate(['/openlol/home']).then(() => {
+            console.log("gogogogogogogooooo");
             observer.unsubscribe();
+            observer.complete();
+            lcuSubscription.unsubscribe();
           });
         }
         observer.next(true);
       });
     });
+    return guardSubscription;
   }
 
 }

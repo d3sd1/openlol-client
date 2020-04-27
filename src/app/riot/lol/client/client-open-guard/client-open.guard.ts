@@ -1,12 +1,19 @@
 import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree} from '@angular/router';
+import {
+  ActivatedRouteSnapshot,
+  CanActivate,
+  CanActivateChild,
+  Router,
+  RouterStateSnapshot,
+  UrlTree
+} from '@angular/router';
 import {Observable} from 'rxjs';
 import {LcuConnectorService} from "../lcu-connector/lcu-connector.service";
 
 @Injectable({
   providedIn: 'root'
 })
-export class ClientOpenGuard implements CanActivate {
+export class ClientOpenGuard implements CanActivate, CanActivateChild {
   constructor(private lcuConnector: LcuConnectorService, private router: Router) {
 
   }
@@ -30,6 +37,12 @@ export class ClientOpenGuard implements CanActivate {
         observer.next(true);
       });
     });
+  }
+
+  canActivateChild(
+    next: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    return this.canActivate(next, state);
   }
 
 }
