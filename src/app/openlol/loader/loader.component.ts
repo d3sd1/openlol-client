@@ -19,7 +19,6 @@ export class LoaderComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.lcuSubscription = this.lcuConnector.clientStatus().subscribe((statusUpdate) => {
       if (statusUpdate) {
-        console.log("gogogogogogogooooo buuut on loader");
         this.router.navigateByUrl('/openlol/home');
         if (this.lcuSubscription !== null) {
           this.lcuSubscription.unsubscribe();

@@ -21,22 +21,26 @@ export class ClientOpenGuard implements CanActivate, CanActivateChild {
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    return new Observable<boolean | UrlTree>((observer) => {
+    const guardSubscription = new Observable<boolean | UrlTree>((observer) => {
       const initOpen = this.lcuConnector.isClientOpen();
       if (!initOpen) {
         this.router.navigateByUrl('openlol/offline').then(() => {
           observer.unsubscribe();
+          observer.complete();
         });
       }
-      this.lcuConnector.clientStatus().subscribe((isOpen) => {
+      const lcuSubscription = this.lcuConnector.clientStatus().subscribe((isOpen) => {
         if (!isOpen) {
           this.router.navigateByUrl('openlol/offline').then(() => {
             observer.unsubscribe();
+            observer.complete();
+            lcuSubscription.unsubscribe();
           });
         }
         observer.next(true);
       });
     });
+    return guardSubscription;
   }
 
   canActivateChild(
