@@ -3,6 +3,7 @@ import {SessionInfo} from "../../../riot/lol/client/api-model/session-info";
 import {FlowStatus} from "../../../riot/lol/client/model/flow-status";
 import {SessionInfoService} from "../../../riot/lol/client/mocks/session-info/session-info.service";
 import {FlowListenerService} from "../../../riot/lol/client/flow-listener/flow-listener.service";
+import {PlayerMatchHistoryService} from "../../../riot/lol/client/mocks/player-match-history/player-match-history.service";
 
 @Component({
   selector: 'app-start',
@@ -16,18 +17,23 @@ export class StartComponent implements OnInit, OnDestroy {
   queueAutoAccepterInterval;
 
   constructor(private sessionInfoService: SessionInfoService,
-              private flowListenerService: FlowListenerService) {
+              private flowListenerService: FlowListenerService,
+              private playerMatchHistoryService: PlayerMatchHistoryService) {
   }
 
   ngOnInit(): void {
     this.sessionInfoService.getInfo().subscribe((sessionInfo: SessionInfo) => {
       this.sessionInfo = sessionInfo;
+      console.log(sessionInfo);
     }, (err) => {
       console.log(err);
     });
     this.flowListenerService.flowListener().subscribe((observer: FlowStatus) => {
       console.log(observer);
       this.flowStatus = observer;
+    });
+    this.playerMatchHistoryService.getInfo().subscribe((ee) => {
+      console.log("HISTORY", ee);
     });
   }
 
