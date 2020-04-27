@@ -8,13 +8,14 @@ import {
   UrlTree
 } from '@angular/router';
 import {Observable} from 'rxjs';
-import {LcuConnectorService} from "../lcu-connector/lcu-connector.service";
+import {FlowListenerService} from "../flow-listener/flow-listener.service";
+import {FlowStatus} from "../model/flow-status";
 
 @Injectable({
   providedIn: 'root'
 })
-export class ClientOpenGuard implements CanActivate, CanActivateChild {
-  constructor(private lcuConnector: LcuConnectorService, private router: Router) {
+export class PlayerNotOnChampSelectGuard implements CanActivate, CanActivateChild {
+  constructor(private flowListenerService: FlowListenerService, private router: Router) {
 
   }
 
@@ -22,9 +23,9 @@ export class ClientOpenGuard implements CanActivate, CanActivateChild {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     const guardSubscription = new Observable<boolean | UrlTree>((observer) => {
-      const initOpen = this.lcuConnector.isClientOpen();
-      if (!initOpen) {
-        this.router.navigateByUrl('openlol/offline').then(() => {
+      const initFlow = this.flowListenerService.getFlowStatus();
+      if (initFlow.phase === 'ChampSelect') {
+        this.router.navigate(['/openlol/champselect']).then(() => {
           observer.next(false);
           observer.unsubscribe();
           observer.complete();
@@ -32,9 +33,9 @@ export class ClientOpenGuard implements CanActivate, CanActivateChild {
       } else {
         observer.next(true);
       }
-      const lcuSubscription = this.lcuConnector.clientStatus().subscribe((isOpen) => {
-        if (!isOpen) {
-          this.router.navigateByUrl('openlol/offline').then(() => {
+      const lcuSubscription = this.flowListenerService.flowListener().subscribe((flowStatus: FlowStatus) => {
+        if (flowStatus.phase === 'ChampSelect') {
+          this.router.navigate(['/openlol/champselect']).then(() => {
             observer.next(false);
             observer.unsubscribe();
             observer.complete();
@@ -46,16 +47,14 @@ export class ClientOpenGuard implements CanActivate, CanActivateChild {
         observer.next(false);
         observer.unsubscribe();
         observer.complete();
-        lcuSubscription.unsubscribe();
       });
     });
     return guardSubscription;
   }
 
-  canActivateChild(
-    next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    return this.canActivate(next, state);
+  canActivateChild(childRoute: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    return this.canActivate(childRoute, state);
   }
+
 
 }

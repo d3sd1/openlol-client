@@ -8,22 +8,9 @@ export class FlowStatus {
   gameData: GameData;
   gameDodge: GameDodge;
   map: GameMap;
-  phase: string; // LEGAL VALUES: Lobby
+  phase: string = ''; // LEGAL VALUES: Lobby
   isReadyToAcceptMatch: boolean;
   isInQueue: boolean;
   isInLobby: boolean;
-
-  constructor(gameClient: GameClient, gameData: GameData, gameDodge: GameDodge, map: GameMap, phase: string) {
-    this.gameClient = gameClient;
-    this.gameData = gameData;
-    this.gameDodge = gameDodge;
-    this.map = map;
-    this.phase = phase;
-
-    // Formatted values
-    this.isReadyToAcceptMatch = this.phase.toLowerCase() === 'readycheck';
-    this.isInQueue = this.phase.toLowerCase() === 'matchmaking';
-    this.isInLobby = this.phase.toLowerCase() === 'lobby';
-  }
 
 }

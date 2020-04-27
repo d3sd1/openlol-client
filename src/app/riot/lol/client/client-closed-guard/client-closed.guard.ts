@@ -18,19 +18,28 @@ export class ClientClosedGuard implements CanActivate {
       const initOpen = this.lcuConnector.isClientOpen();
       if (initOpen) {
         this.router.navigate(['/openlol/home']).then(() => {
+          observer.next(false);
           observer.unsubscribe();
           observer.complete();
         });
+      } else {
+        observer.next(true);
       }
       const lcuSubscription = this.lcuConnector.clientStatus().subscribe((isOpen) => {
         if (isOpen) {
           this.router.navigate(['/openlol/home']).then(() => {
+            observer.next(false);
             observer.unsubscribe();
             observer.complete();
             lcuSubscription.unsubscribe();
           });
         }
         observer.next(true);
+      }, () => {
+        observer.next(false);
+        observer.unsubscribe();
+        observer.complete();
+        lcuSubscription.unsubscribe();
       });
     });
     return guardSubscription;

@@ -6,14 +6,23 @@ import {ClientClosedGuard} from "../riot/lol/client/client-closed-guard/client-c
 import {LoaderComponent} from './loader/loader.component';
 import {ConfigComponent} from "./home/config/config.component";
 import {AutomatizationsComponent} from "./home/automatizations/automatizations.component";
+import {ChampselectComponent} from "./champselect/champselect.component";
+import {PlayerNotOnChampSelectGuard} from "../riot/lol/client/player-not-on-champ-select-guard/player-not-on-champ-select.guard";
+import {PlayerOnChampSelectGuard} from "../riot/lol/client/player-on-champ-select-guard/player-on-champ-select.guard";
+import {StartComponent} from "./home/start/start.component";
 
 export const OnLoLRoutes: Routes = [
   {
     path: 'home',
+    canActivate: [ClientOpenGuard, PlayerNotOnChampSelectGuard],
+    canActivateChild: [ClientOpenGuard, PlayerNotOnChampSelectGuard],
     component: HomeComponent,
-    canActivate: [ClientOpenGuard],
-    canActivateChild: [ClientOpenGuard],
     children: [
+      {path: '', redirectTo: 'start', pathMatch: 'full'},
+      {
+        path: 'start',
+        component: StartComponent
+      },
       {
         path: 'automatizations',
         component: AutomatizationsComponent
@@ -21,8 +30,13 @@ export const OnLoLRoutes: Routes = [
       {
         path: 'config',
         component: ConfigComponent
-      }
+      },
     ]
+  },
+  {
+    path: 'champselect',
+    component: ChampselectComponent,
+    canActivate: [ClientOpenGuard, PlayerOnChampSelectGuard]
   },
   {
     path: 'offline',
