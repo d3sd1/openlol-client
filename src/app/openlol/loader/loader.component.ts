@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {LcuConnectorService} from '../../riot/lol/client/lcu-connector.service';
+import {LcuConnectorService} from '../../riot/lol/client/lcu-connector/lcu-connector.service';
 import {Router} from '@angular/router';
 
 @Component({
@@ -15,10 +15,11 @@ export class LoaderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.lcuConnector.clientStatus().subscribe((statusUpdate) => {if (statusUpdate) {
-        /* TODO this.router.navigateByUrl('/openlol/home'); */
+    this.lcuConnector.clientStatus().subscribe((statusUpdate) => {
+      if (statusUpdate) {
+        this.router.navigateByUrl('/openlol/home');
       } else {
-        /* TODO this.router.navigateByUrl('openlol/offline'); */
+        this.router.navigateByUrl('openlol/offline');
       }
     });
   }

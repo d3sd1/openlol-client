@@ -1,21 +1,20 @@
 import {NgModule} from '@angular/core';
-import {Routes, RouterModule} from '@angular/router';
+import {RouterModule, Routes} from '@angular/router';
 import {PageNotFoundComponent} from './shared/components';
 import {OfflineComponent} from "./openlol/offline/offline.component";
-import {OnLoLRoutes} from "./openlol/onlol.routes";
 import {HomeComponent} from './openlol/home/home.component';
-import {ClientOpenGuard} from './riot/lol/client/client-open.guard';
-import {ClientClosedGuard} from './riot/lol/client/client-closed.guard';
+import {ClientOpenGuard} from './riot/lol/client/client-open-guard/client-open.guard';
+import {ClientClosedGuard} from './riot/lol/client/client-closed-guard/client-closed.guard';
 import {LoaderComponent} from './openlol/loader/loader.component';
 
 const routes: Routes = [
-    {
-      path: '',
-      redirectTo: 'openlol/loader',
-      pathMatch: 'full'
-    },
-    {
-      path: 'openlol',
+  {
+    path: '',
+    redirectTo: 'openlol/loader',
+    pathMatch: 'full'
+  },
+  {
+    path: 'openlol',
       children: [{
         path: 'home',
         component: HomeComponent,

@@ -1,11 +1,11 @@
-import {Injectable, OnDestroy, OnInit} from '@angular/core';
-import {LcuCredentials} from "./lcu-credentials";
+import {Injectable} from '@angular/core';
+import {LcuCredentials} from "../model/lcu-credentials";
 import {Observable} from "rxjs";
-import {ElectronService} from "../../../core/services";
-import {AppConfig} from "../../../../environments/environment";
-import {Platform} from "./Platform";
+import {ElectronService} from "../../../../core/services";
+import {AppConfig} from "../../../../../environments/environment";
+import {Platform} from "../model/platform";
 import {normalize} from 'path';
-import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'

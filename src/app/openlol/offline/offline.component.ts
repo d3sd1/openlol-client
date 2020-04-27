@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import {LcuConnectorService} from "../../riot/lol/client/lcu-connector.service";
-import {LcuCredentials} from "../../riot/lol/client/lcu-credentials";
+import {Component, OnInit} from '@angular/core';
+import {LcuConnectorService} from "../../riot/lol/client/lcu-connector/lcu-connector.service";
 import {Router} from "@angular/router";
 
 @Component({
@@ -9,7 +8,8 @@ import {Router} from "@angular/router";
 })
 export class OfflineComponent implements OnInit {
 
-  constructor(private lcuConnectorService: LcuConnectorService, private router: Router) { }
+  constructor(private lcuConnectorService: LcuConnectorService, private router: Router) {
+  }
 
   ngOnInit(): void {
   }

@@ -1,8 +1,5 @@
 import {ModuleWithProviders, NgModule} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import {RiotLolModule} from "../riot-lol.module";
-import {LcuConnectorService} from "./lcu-connector.service";
-
+import {LcuConnectorService} from "./lcu-connector/lcu-connector.service";
 
 
 @NgModule({

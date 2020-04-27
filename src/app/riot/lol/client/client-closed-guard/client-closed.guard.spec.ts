@@ -1,20 +1,17 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { ClientOpenGuard } from './client-open.guard';
+import {ClientOpenGuard} from '../client-open-guard/client-open.guard';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {HttpClient, HttpClientModule} from '@angular/common/http';
-import {LcuConnectorService} from './lcu-connector.service';
-import {RouterTestingModule} from '@angular/router/testing';
 import {ClientClosedGuard} from './client-closed.guard';
-import {Router} from '@angular/router';
+import {RouterTestingModule} from '@angular/router/testing';
 
-describe('ClientOpenGuard', () => {
+describe('ClientClosedGuard', () => {
   let guard: ClientOpenGuard;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, RouterTestingModule],
-      providers: [ClientOpenGuard]
+      providers: [ClientClosedGuard]
     });
     guard = TestBed.inject(ClientOpenGuard);
   });

@@ -1,10 +1,7 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { LoaderComponent } from './loader.component';
+import {LoaderComponent} from './loader.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {HttpClient, HttpClientModule} from '@angular/common/http';
-import {ClientOpenGuard} from '../../riot/lol/client/client-open.guard';
-import {Router, RouterModule} from '@angular/router';
 import {RouterTestingModule} from '@angular/router/testing';
 
 describe('LoaderComponent', () => {
