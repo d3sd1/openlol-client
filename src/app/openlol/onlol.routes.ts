@@ -10,6 +10,7 @@ import {ChampselectComponent} from "./champselect/champselect.component";
 import {PlayerNotOnChampSelectGuard} from "../riot/lol/client/player-not-on-champ-select-guard/player-not-on-champ-select.guard";
 import {PlayerOnChampSelectGuard} from "../riot/lol/client/player-on-champ-select-guard/player-on-champ-select.guard";
 import {StartComponent} from "./home/start/start.component";
+import {OpenlolApiErrorComponent} from "./loader/openlol-api-error/openlol-api-error.component";
 
 export const OnLoLRoutes: Routes = [
   {
@@ -46,6 +47,12 @@ export const OnLoLRoutes: Routes = [
   {
     path: 'loader',
     component: LoaderComponent,
+    //canDeactivate cuando todo este cargado
+    //canActiviate cuando no este todo cargado
+  },
+  {
+    path: 'openlol_api_error',
+    component: OpenlolApiErrorComponent,
     //canDeactivate cuando todo este cargado
     //canActiviate cuando no este todo cargado
   }

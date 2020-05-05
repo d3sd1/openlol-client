@@ -2,6 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {LcuConnectorService} from '../../riot/lol/client/lcu-connector/lcu-connector.service';
 import {Router} from '@angular/router';
 import {Subscription} from "rxjs";
+import {OpenLolApiService} from "../../core/openlol/open-lol-api.service";
 
 @Component({
   selector: 'app-loader',
@@ -13,10 +14,39 @@ export class LoaderComponent implements OnInit, OnDestroy {
   loadingMessage = "Iniciando...";
   private lcuSubscription: Subscription = null;
 
-  constructor(private lcuConnector: LcuConnectorService, private router: Router) {
+  constructor(private lcuConnector: LcuConnectorService, private router: Router, private openLolApi: OpenLolApiService) {
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
+    await this.initApp();
+  }
+
+  private advanceStep(msg, perc) {
+    this.loadingMessage = msg;
+    this.loaderPercentage += perc;
+  }
+
+  private async initApp(): Promise<void> {
+    this.advanceStep('Cargando módulos api...', 10);
+    this.initOpenLoLApi().then(() => {
+      this.advanceStep('Conectando con LCU...', 30);
+      this.initLolClientListener();
+    }, () => {
+      this.router.navigateByUrl('openlol/openlol_api_error').then(r => {
+        if (this.lcuSubscription !== null) {
+          this.lcuSubscription.unsubscribe();
+          this.lcuSubscription = null;
+        }
+      });
+    });
+  }
+
+  private async initOpenLoLApi(): Promise<boolean> {
+    return await this.openLolApi.initRequestKey();
+  }
+
+  private initLolClientListener() {
+    console.log("init lol client listener");
     this.lcuSubscription = this.lcuConnector.clientStatus().subscribe((statusUpdate) => {
       if (statusUpdate) {
         this.router.navigateByUrl('/openlol/home').then(() => {
