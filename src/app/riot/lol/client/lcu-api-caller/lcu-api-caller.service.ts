@@ -19,15 +19,15 @@ export class LcuApiCallerService {
       const headers = new HttpHeaders()
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json')
-        .set('username', credentials.username)
-        .set('password', credentials.password);
+        .set('username', credentials?.username)
+        .set('password', credentials?.password);
 
       const httpOptions = {
         headers: headers
       };
 
       try {
-        return this.http.get<T>('https://' + credentials.username + ':' + credentials.password + '@127.0.0.1:' + credentials.port + lcuEndpoint.endpointUri, httpOptions)
+        return this.http.get<T>('https://' + credentials?.username + ':' + credentials?.password + '@127.0.0.1:' + credentials?.port + lcuEndpoint.endpointUri, httpOptions)
           .pipe<T>(
             catchError(error => {
               return of(null);

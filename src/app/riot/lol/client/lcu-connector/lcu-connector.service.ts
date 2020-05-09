@@ -40,7 +40,6 @@ export class LcuConnectorService {
           accept(this.getLcuCredentials());
         }, 1000);
       } else {
-        console.log('lcu cred:', this.lcuCredentials);
         accept(this.lcuCredentials);
       }
     });

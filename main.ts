@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen } from 'electron';
+import {app, BrowserWindow, screen} from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 
@@ -20,10 +20,11 @@ function createWindow(): BrowserWindow {
     webPreferences: {
       webSecurity: false,
       nodeIntegration: true,
-      allowRunningInsecureContent: (serve) ? true : false,
+      allowRunningInsecureContent: serve,
     },
+    icon: path.join(__dirname, 'assets/icons/favicon.png')
   });
-
+  console.log('icon path:', path.join(__dirname, 'src/assets/icons/favicon.png'));
   if (serve) {
     require('electron-reload')(__dirname, {
       electron: require(`${__dirname}/node_modules/electron`)
@@ -56,7 +57,6 @@ try {
 
   app.allowRendererProcessReuse = true;
   app.commandLine.appendSwitch('ignore-certificate-errors', 'true');
-
 
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.

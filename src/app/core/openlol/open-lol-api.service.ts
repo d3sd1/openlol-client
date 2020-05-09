@@ -11,7 +11,7 @@ import {AppConfig} from "../../../environments/environment";
 })
 export class OpenLolApiService {
   webSocketEndPoint: string = 'http://localhost:8080/login';
-  stompClient: any;
+  stompClient: Stomp;
   private requestKey = null;
   private readonly pc_uuid;
 
@@ -20,9 +20,9 @@ export class OpenLolApiService {
     this.stompClient = null;
   }
 
-  subscribe(topic) {
-    return this.stompClient.subscribe(topic, (sdkEvent) => {
-      console.log("ERROR DE CANAL: ", sdkEvent);
+  listen(topic) {
+    this.stompClient.subscribe(topic, (data) => {
+      console.log('data rrcv ferom srv: ', data);
     });
   }
 
@@ -33,7 +33,9 @@ export class OpenLolApiService {
   connect(redirectHome = false): Promise<boolean> {
     if (this.stompClient !== null) {
       console.log("Stompclient already init!", this.stompClient);
-      return;
+      return new Promise<boolean>((resolve) => {
+        resolve(true);
+      });
     }
     return new Promise<boolean>((resolve, reject) => {
       this.stompClient = Stomp.over(new SockJS(this.webSocketEndPoint));

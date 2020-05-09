@@ -8,7 +8,14 @@ import {AutomatizationsComponent} from './home/automatizations/automatizations.c
 import {ConfigComponent} from './home/config/config.component';
 import {ChampselectComponent} from './champselect/champselect.component';
 import {StartComponent} from './home/start/start.component';
-import {AccordionModule, CardsModule, IconsModule} from "ng-uikit-pro-standard";
+import {
+  AccordionModule,
+  AnimatedCardsModule,
+  ButtonsModule,
+  CardsModule,
+  IconsModule,
+  WavesModule
+} from "ng-uikit-pro-standard";
 import {OpenlolApiErrorComponent} from './loader/openlol-api-error/openlol-api-error.component';
 
 
@@ -17,7 +24,10 @@ import {OpenlolApiErrorComponent} from './loader/openlol-api-error/openlol-api-e
   imports: [
     AccordionModule,
     IconsModule,
-    CardsModule
+    CardsModule,
+    AnimatedCardsModule,
+    WavesModule,
+    ButtonsModule
   ],
   providers: [
     SessionInfoService

@@ -1,0 +1,9 @@
+.emblem {
+  border-radius: 0% !important;
+  height: auto !important;
+}
+
+.emblem img {
+  background-color: transparent !important;
+  border: none !important;
+}

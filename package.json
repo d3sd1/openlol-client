@@ -44,7 +44,7 @@
     "ng:serve": "ng serve",
     "ng:serve:web": "ng serve -c web -o",
     "electron:serve-tsc": "tsc -p tsconfig-serve.json",
-    "electron:serve": "wait-on http-get://localhost:4200/ && npm run electron:serve-tsc && electron . --serve",
+    "electron:serve": "wait-on http-get://localhost:4200/ && npm run electron:serve-tsc && electron . --serve --enable-logging",
     "electron:local": "npm run build:prod && electron .",
     "electron:linux": "npm run build:prod && electron-builder build --linux",
     "electron:windows": "npm run build:prod && electron-builder build --windows",
@@ -123,6 +123,7 @@
     "crypto-js": "4.0.0",
     "hammerjs": "2.0.8",
     "jsencrypt": "3.0.0-rc.1",
+    "jwt-decode": "2.2.0",
     "node-machine-id": "1.1.12",
     "path": "0.12.7"
   },
