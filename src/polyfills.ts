@@ -56,13 +56,17 @@
  * Zone JS is required by default for Angular itself.
  */
 import 'zone.js/dist/zone'; // Included with Angular CLI.
+import 'zone.js/dist/zone-error';
+
+(window as any).__Zone_disable_EventEmitter = true;
+(window as any).__Zone_Error_BlacklistedStackFrames_policy = 'disable';
 
 
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
-
-//window.console.log = function () { };
+/*
+window.console.log = function () { };
 window.console.error = function () {
 };
 window.console.info = function () {
@@ -79,3 +83,4 @@ window.console.exception = function () {
 };
 window.console.assert = function () {
 };
+*/

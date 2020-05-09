@@ -1,40 +1,75 @@
 import {Injectable} from '@angular/core';
 import {LcuCredentials} from "../model/lcu-credentials";
-import {Observable} from "rxjs";
+import {Observable, Subject} from "rxjs";
 import {ElectronService} from "../../../../core/services";
-import {AppConfig} from "../../../../../environments/environment";
 import {Platform} from "../model/platform";
 import {normalize} from 'path';
 import {HttpClient} from '@angular/common/http';
+import {FSWatcher} from "fs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class LcuConnectorService {
+  private loadingConnector = true;
   private lcuCredentials: LcuCredentials;
-  private clientObservable: Observable<boolean>;
-  private clientStatusOpen: boolean;
+  private clientObservable: Subject<boolean>;
+  private lockfilePath = null;
+  private lockfileListener: FSWatcher = null;
 
   constructor(private electronService: ElectronService, private http: HttpClient) {
-    this.clientStatusOpen = false;
-    this.clientObservable = this.initClientManager();
+    this.lockfilePath = null;
+    this.clientObservable = new Subject<boolean>();
+    this.setupLcu();
+    this.loadingConnector = false;
+  }
+
+  // EXTERNALS
+  clientStatus(): Observable<boolean> {
+    return this.clientObservable;
+  }
+
+  isClientOpen(): boolean {
+    return this.lcuCredentials !== null;
+  }
+
+  async getLcuCredentials(): Promise<LcuCredentials> {
+    return new Promise<LcuCredentials>((accept, reject) => {
+      if (this.loadingConnector) {
+        setTimeout(() => {
+          accept(this.getLcuCredentials());
+        }, 1000);
+      } else {
+        console.log('lcu cred:', this.lcuCredentials);
+        accept(this.lcuCredentials);
+      }
+    });
+  }
+
+  private setupLcu() {
+    if (this.lockfilePath === null) {
+      this.lockfilePath = this.getLockfilePath();
+      this.readLockfileCredentials();
+      this.setupLockfileListener();
+      this.clientObservable.next(this.isClientOpen());
+    }
+    // This means app could not load (client still closed). Setup reload interval.
+    if (this.lockfilePath === null) {
+      setTimeout(() => {
+        this.setupLcu();
+      }, 3000);
+    }
   }
 
   private getPlatform(): Platform {
     switch (process.platform) {
       case 'darwin':
         return Platform.MACOS;
-        break;
       case 'win32':
         return Platform.WINDOWS;
-        break;
       default:
         return Platform.UNKNOWN;
     }
-  }
-
-  getLcuCredentials(): LcuCredentials {
-    return this.lcuCredentials;
   }
 
   private getWindowsLockfile(): string {
@@ -60,7 +95,50 @@ export class LcuConnectorService {
     }
   }
 
-  private getLockfile() {
+
+  /*
+    playingStatus(): Observable<LcuCredentials> {
+      return this.clientObservable;
+    }
+    lobbyStatus(): Observable<LcuCredentials> {
+      return this.clientObservable;
+    }*/
+
+  private readLockfileCredentials() {
+    try {
+      const lockFile = this.electronService.fs.readFileSync(this.lockfilePath, "utf8");
+      const parts = lockFile.split(':');
+      const newLcuCredentials = new LcuCredentials();
+      newLcuCredentials.port = parts[2];
+      newLcuCredentials.username = 'riot';
+      newLcuCredentials.password = parts[3];
+      this.lcuCredentials = newLcuCredentials;
+    } catch (e) {
+      this.lcuCredentials = null;
+      this.lockfilePath = null;
+    }
+  }
+
+  private setupLockfileListener() {
+    try {
+      if (this.lockfileListener !== null) {
+        this.lockfileListener.close();
+      }
+
+      this.lockfileListener = this.electronService.fs.watch(this.lockfilePath, (event, filename) => {
+        if (filename) {
+          this.readLockfileCredentials();
+          this.clientObservable.next(this.isClientOpen());
+          this.setupLcu();
+        }
+      });
+    } catch (e) {
+      this.lcuCredentials = null;
+      this.lockfilePath = null;
+    }
+  }
+
+  private getLockfilePath(): string {
     let lockfilePath = "";
     const platform = this.getPlatform();
     if (platform === Platform.WINDOWS) {
@@ -71,78 +149,5 @@ export class LcuConnectorService {
       console.error("OpenLol is not ready for your platform mate...");
     }
     return lockfilePath;
-  }
-
-  private async translateLockfileToCredentials(lockfile): Promise<void> {
-    const parts = lockfile.split(':');
-    const newLcuCredentials = new LcuCredentials();
-    newLcuCredentials.port = parts[2];
-    newLcuCredentials.username = 'riot';
-    newLcuCredentials.password = parts[3];
-    this.lcuCredentials = newLcuCredentials;
-    return new Promise<void>((resolve, reject) => {
-      if (this.lcuCredentials !== null) {
-        resolve();
-      } else {
-        setTimeout(() => {
-          return this.getLcuCredentials();
-        }, 3000);
-      }
-    });
-  }
-
-  private async runClientSetup() {
-    if (!this.isClientOpen()) {
-      return;
-    }
-    let lockFile;
-    if (this.clientStatusOpen) {
-      try {
-        lockFile = this.electronService.fs.readFileSync(this.getLockfile(), "utf8");
-        await this.translateLockfileToCredentials(lockFile);
-      } catch (e) {
-
-      }
-    }
-
-  }
-
-  private clientStatusObserver(subscriber) {
-    const lockFilePath = this.getLockfile();
-    this.clientStatusOpen = lockFilePath !== null;
-    subscriber.next(this.isClientOpen());
-  }
-
-  private runClientManager(observer) {
-    if (!this.isClientOpen()) {
-      this.lcuCredentials = null;
-    }
-    if (this.isClientOpen() && this.getLcuCredentials() == null) {
-      this.runClientSetup();
-    }
-    this.clientStatusObserver(observer);
-  }
-
-  private initClientManager() {
-    return new Observable<boolean>((observer) => {
-      this.runClientManager(observer);
-      setInterval(() => {
-        this.runClientManager(observer);
-      }, AppConfig.lockfileRefresh.file);
-    });
-  }
-
-  clientStatus(): Observable<boolean> {
-    return this.clientObservable;
-  }/*
-  playingStatus(): Observable<LcuCredentials> {
-    return this.clientObservable;
-  }
-  lobbyStatus(): Observable<LcuCredentials> {
-    return this.clientObservable;
-  }*/
-
-  isClientOpen(): boolean {
-    return this.clientStatusOpen;
   }
 }

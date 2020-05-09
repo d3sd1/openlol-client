@@ -45,7 +45,11 @@ export class FlowListenerService {
       this.flowStatus = new FlowStatus();
       observer.next(this.flowStatus);
     }, () => {
-      apiCall.unsubscribe();
+      try {
+        apiCall.unsubscribe();
+      } catch (e) {
+
+      }
     });
   }
   private runHookEvents() {

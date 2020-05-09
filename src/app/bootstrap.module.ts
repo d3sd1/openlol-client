@@ -46,11 +46,12 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
       }
     })
   ],
-  providers: [HttpClientModule, {
-    provide: HTTP_INTERCEPTORS,
-    useClass: HttpErrorInterceptor,
-    multi: true,
-  }],
+  providers: [HttpClientModule,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptor,
+      multi: true,
+    }],
   bootstrap: [BootstrapComponent]
 })
 export class BootstrapModule {
