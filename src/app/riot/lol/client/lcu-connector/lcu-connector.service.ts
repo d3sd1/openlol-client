@@ -40,10 +40,10 @@ export class LcuConnectorService {
   private getWindowsLockfile(): string {
     try {
       const stdout = this.electronService.childProcess.execSync(`WMIC PROCESS WHERE name='LeagueClient.exe' GET ExecutablePath`).toString();
-      if(!stdout.includes('LeagueClient.exe')) { // Means not open.
+      if (!stdout.includes('LeagueClient.exe')) { // Means not open.
         return null;
       }
-      const fullPath = normalize(stdout).split(/\n|\n\r/)[1].replace('LeagueClient.exe','');
+      const fullPath = normalize(stdout).split(/\n|\n\r/)[1].replace('LeagueClient.exe', '');
       return fullPath + '\\lockfile';
     } catch (e) {
       return null;
@@ -73,16 +73,25 @@ export class LcuConnectorService {
     return lockfilePath;
   }
 
-  private translateLockfileToCredentials(lockfile) {
+  private async translateLockfileToCredentials(lockfile): Promise<void> {
     const parts = lockfile.split(':');
     const newLcuCredentials = new LcuCredentials();
     newLcuCredentials.port = parts[2];
     newLcuCredentials.username = 'riot';
     newLcuCredentials.password = parts[3];
     this.lcuCredentials = newLcuCredentials;
+    return new Promise<void>((resolve, reject) => {
+      if (this.lcuCredentials !== null) {
+        resolve();
+      } else {
+        setTimeout(() => {
+          return this.getLcuCredentials();
+        }, 3000);
+      }
+    });
   }
 
-  private runClientSetup() {
+  private async runClientSetup() {
     if (!this.isClientOpen()) {
       return;
     }
@@ -90,7 +99,7 @@ export class LcuConnectorService {
     if (this.clientStatusOpen) {
       try {
         lockFile = this.electronService.fs.readFileSync(this.getLockfile(), "utf8");
-        this.translateLockfileToCredentials(lockFile);
+        await this.translateLockfileToCredentials(lockFile);
       } catch (e) {
 
       }

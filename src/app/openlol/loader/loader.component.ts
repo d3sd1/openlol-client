@@ -28,22 +28,23 @@ export class LoaderComponent implements OnInit, OnDestroy {
 
   private async initApp(): Promise<void> {
     this.advanceStep('Cargando módulos api...', 10);
-    this.initOpenLoLApi().then(() => {
-      this.advanceStep('Conectando con LCU...', 30);
-      this.initLolClientListener();
-    }, () => {
-      this.router.navigateByUrl('openlol/openlol_api_error').then(r => {
-        if (this.lcuSubscription !== null) {
-          this.lcuSubscription.unsubscribe();
-          this.lcuSubscription = null;
-        }
-      });
+    await this.openLolApi.connect().then((connected) => {
+      if (connected) {
+        this.advanceStep('Conectando con LCU...', 30);
+        this.initLolClientListener();
+      } else {
+        this.router.navigateByUrl('openlol/openlol_api_error').then(r => {
+          if (this.lcuSubscription !== null) {
+            this.lcuSubscription.unsubscribe();
+            this.lcuSubscription = null;
+          }
+        });
+      }
+    }, (err) => {
+      console.log('ERRROR: ', err);
     });
   }
 
-  private async initOpenLoLApi(): Promise<boolean> {
-    return await this.openLolApi.initRequestKey();
-  }
 
   private initLolClientListener() {
     console.log("init lol client listener");

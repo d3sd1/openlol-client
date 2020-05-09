@@ -16,6 +16,15 @@ export class FlowListenerService {
 
   constructor(private queueService: FlowService,
               private queueAcceptService: QueueAcceptService) {
+    let observer;
+    this.flowSubscription = new Observable<FlowStatus>((obs: Subscriber<FlowStatus>) => {
+      observer = obs;
+    });
+    this.reloadFlowListener(observer);
+    this.flowInterval = setInterval(() => {
+      console.log('reload flow listener');
+      this.reloadFlowListener(observer);
+    }, 5000); // This should never be destroyed so...
   }
 
   public getFlowStatus() {
@@ -23,14 +32,11 @@ export class FlowListenerService {
   }
 
   flowListener(): Observable<FlowStatus> {
-    if (this.flowSubscription === null) {
-      this.generateFlowListener();
-    }
     return this.flowSubscription;
   }
 
   private reloadFlowListener(observer: Subscriber<FlowStatus>) {
-    this.queueService.getInfo().subscribe((flowStatus: FlowStatus) => {
+    const apiCall = this.queueService.getInfo().subscribe((flowStatus: FlowStatus) => {
       this.flowStatus = flowStatus;
       this.runHookEvents();
       observer.next(this.flowStatus);
@@ -38,18 +44,10 @@ export class FlowListenerService {
       console.log(err);
       this.flowStatus = new FlowStatus();
       observer.next(this.flowStatus);
+    }, () => {
+      apiCall.unsubscribe();
     });
   }
-
-  private generateFlowListener() {
-    this.flowSubscription = new Observable<FlowStatus>((observer: Subscriber<FlowStatus>) => {
-      this.reloadFlowListener(observer);
-      this.flowInterval = setInterval(() => {
-        this.reloadFlowListener(observer);
-      }, 5000); // This should never be destroyed so...
-    });
-  }
-
   private runHookEvents() {
     // Queue autoaccept
     if (this.flowStatus.phase.toLowerCase() == 'readycheck' && this.userConfig.autoAcceptQueue) {
@@ -59,7 +57,6 @@ export class FlowListenerService {
 
 
   private hookQueueAutoAccepter() {
-    console.log("Attempting auto accept game...");
     this.queueAcceptService.doPost().subscribe((data) => {
       console.log("MATCHH DATA: ", data);
     }, (data) => {

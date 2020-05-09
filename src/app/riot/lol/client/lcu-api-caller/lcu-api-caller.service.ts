@@ -1,9 +1,10 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import {LcuConnectorService} from "../lcu-connector/lcu-connector.service";
 import {ApiCallType} from "../model/api-call-type";
 import {LcuEndpoint} from "../model/lcu-endpoint";
-import {Observable} from "rxjs";
+import {EMPTY, Observable} from 'rxjs';
+import {catchError} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,7 @@ export class LcuApiCallerService {
 
   sendCall<T>(lcuEndpoint: LcuEndpoint, bodyCall?: object): Observable<T> {
     const credentials = this.lcuConnectorService.getLcuCredentials();
+
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
@@ -27,7 +29,10 @@ export class LcuApiCallerService {
 
     switch (lcuEndpoint.apiCallType) {
       case ApiCallType.GET:
-        return this.http.get<T>('https://' + credentials.username + ':' + credentials.password + '@127.0.0.1:' + credentials.port + lcuEndpoint.endpointUri, httpOptions);
+        return this.http.get<T>('https://' + credentials.username + ':' + credentials.password + '@127.0.0.1:' + credentials.port + lcuEndpoint.endpointUri, httpOptions)
+          .pipe(catchError((error: HttpErrorResponse) => {
+            return EMPTY;
+          }));
       case ApiCallType.POST:
         return this.http.post<T>('https://' + credentials.username + ':' + credentials.password + '@127.0.0.1:' + credentials.port + lcuEndpoint.endpointUri, bodyCall, httpOptions);
       case ApiCallType.PUT:

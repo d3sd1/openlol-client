@@ -9,5 +9,11 @@ export const AppConfig = {
   lockfileRefresh: {
     file: 15000,
     guards: 15000,
+  },
+  websockets: {
+    refresh: 5000,
+    host: 'localhost',
+    port: 8080,
+    debug: false
   }
 };

@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {ChampSelectSessionService} from "../../riot/lol/client/mocks/champ-select/champ-select-session.service";
 
 @Component({
   selector: 'app-champselect',
@@ -7,10 +8,13 @@ import {Component, OnInit} from '@angular/core';
 })
 export class ChampselectComponent implements OnInit {
 
-  constructor() {
+  constructor(private champSelectSessionService: ChampSelectSessionService) {
   }
 
   ngOnInit(): void {
+    this.champSelectSessionService.getInfo().subscribe((data) => {
+      console.log(data);
+    });
   }
 
 }

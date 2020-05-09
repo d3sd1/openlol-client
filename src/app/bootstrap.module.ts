@@ -4,7 +4,7 @@ import '../polyfills';
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
-import {HttpClient, HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
 import {CoreModule} from './core/core.module';
 import {SharedModule} from './shared/shared.module';
 
@@ -18,6 +18,7 @@ import {RiotModule} from "./riot/riot.module";
 import {MDBBootstrapModule} from "ng-uikit-pro-standard";
 import {OnlolModule} from "./openlol/onlol.module";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {HttpErrorInterceptor} from "./riot/lol/client/lcu-api-interceptor/lcu-api-interceptor.service";
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
@@ -45,7 +46,12 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
       }
     })
   ],
-  providers: [HttpClientModule],
+  providers: [HttpClientModule, {
+    provide: HTTP_INTERCEPTORS,
+    useClass: HttpErrorInterceptor,
+    multi: true,
+  }],
   bootstrap: [BootstrapComponent]
 })
-export class BootstrapModule {}
+export class BootstrapModule {
+}

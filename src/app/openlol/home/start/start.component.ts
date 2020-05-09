@@ -24,12 +24,10 @@ export class StartComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.sessionInfoService.getInfo().subscribe((sessionInfo: SessionInfo) => {
       this.sessionInfo = sessionInfo;
-      console.log(sessionInfo);
     }, (err) => {
-      console.log(err);
+      console.error(err);
     });
     this.flowListenerService.flowListener().subscribe((observer: FlowStatus) => {
-      console.log(observer);
       this.flowStatus = observer;
     });
     this.playerMatchHistoryService.getInfo().subscribe((ee) => {

@@ -24,7 +24,6 @@ export class PlayerOnChampSelectGuard implements CanActivate, CanActivateChild {
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     const guardSubscription = new Observable<boolean | UrlTree>((observer) => {
       const initFlow = this.flowListenerService.getFlowStatus();
-      console.log("VAMOS NIÑOOO ", initFlow);
       if (initFlow == null || initFlow.phase !== 'ChampSelect') {
         this.router.navigate(['/openlol/home']).then(() => {
           observer.next(false);
