@@ -27,7 +27,7 @@ export class StartComponent implements OnInit, OnDestroy {
               private playerMatchHistoryService: PlayerMatchHistoryService,
               private openLolApiService: OpenLolApiService) {
   }
-
+  
   ngOnInit(): void {
     this.sessionSubscription = this.sessionInfoService.getInfo().subscribe((sessionInfo: SessionInfo) => {
       this.sessionInfo = sessionInfo;
